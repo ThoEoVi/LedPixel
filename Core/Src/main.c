@@ -42,11 +42,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static uint8_t u1l_WS2812B_Color[2U][3u] = {
-  { 0x00U, 0x00U, 0x00U }, /* Black */
-  { 0x00U, 0x10U, 0x10U }, /* Cyan */
-};
-static uint8_t u1l_WS2812B_ColorIndex;
+static uint8_t u1l_WS2812B_Color[16U][3u];
+static uint32_t u4l_WS2812B_ColorIndex;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,11 +68,11 @@ static void f_WS2812B_SendBitOne( void )
 {
   /* Set High level within 800ns */
   HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_SET );
-  f_WS2812B_Delay( 7UL );
+  f_WS2812B_Delay( 8UL );
 
   /* Set High level within 450ns */
   HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
-  f_WS2812B_Delay( 3UL );
+  __asm volatile( "nop" );
 
   return;
 }
@@ -88,7 +85,20 @@ static void f_WS2812B_SendBitZero( void )
 
   /* Set High level within 850ns */
   HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
-  f_WS2812B_Delay( 8UL );
+  f_WS2812B_Delay( 4UL );
+
+  return;
+}
+
+static void f_WS2812B_SendBitZeroLatest( void )
+{
+  /* Set High level within 400ns */
+  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_SET );
+  f_WS2812B_Delay( 2UL );
+
+  /* Set High level within 850ns */
+  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
+  f_WS2812B_Delay( 2UL );
 
   return;
 }
@@ -106,7 +116,7 @@ static void f_WS2812B_SendByte( const uint8_t u1a_Byte )
 {
   uint8_t u1a_BitIndex;
 
-  for( u1a_BitIndex = 0U; u1a_BitIndex < 8U; u1a_BitIndex++ )
+  for( u1a_BitIndex = 0U; u1a_BitIndex < 7U; u1a_BitIndex++ )
   {
     if( ( u1a_Byte & ( 0x80U >> u1a_BitIndex ) ) != 0U )
     {
@@ -116,6 +126,16 @@ static void f_WS2812B_SendByte( const uint8_t u1a_Byte )
     {
       f_WS2812B_SendBitZero();
     }
+  }
+
+  /* Send last byte */
+  if( ( u1a_Byte & 1U ) != 0U )
+  {
+    f_WS2812B_SendBitOne();
+  }
+  else
+  {
+    f_WS2812B_SendBitZeroLatest();
   }
 
   return;
@@ -175,7 +195,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  u1l_WS2812B_ColorIndex = 0U;
+  u4l_WS2812B_ColorIndex = 0U;
   u1l_WS2812B_LedIndex = 0U;
   HAL_Delay( 1000UL );
   f_WS2812B_RES();
@@ -185,20 +205,38 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    u1l_WS2812B_LedIndex = u1l_WS2812B_ColorIndex % 16U;
-    for ( uint8_t u1a_Index = 0U; u1a_Index < 16U; u1a_Index++ )
+    u1l_WS2812B_LedIndex = u4l_WS2812B_ColorIndex % 16U;
+
+    for ( uint8_t u1a_LedIndex = 0U; u1a_LedIndex < 16U; u1a_LedIndex++ )
     {
-      if ( u1a_Index == u1l_WS2812B_LedIndex )
-      {
-        f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[3U], 1U * 3U );
-      }
-      else
-      {
-        f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[0U], 1U * 3U );
-      }
+      u1l_WS2812B_Color[u1a_LedIndex][0U] = 0x00U;
+      u1l_WS2812B_Color[u1a_LedIndex][1U] = 0x00U;
+      u1l_WS2812B_Color[u1a_LedIndex][2U] = 0x00U;
     }
-    u1l_WS2812B_ColorIndex++;
-    HAL_Delay( 200UL );
+
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex%16U)][0U] = 0x11U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex%16U)][1U] = 0x06U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex%16U)][2U] = 0x11U;
+
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*35U/7U)%16U][0U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x2U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*35U/7U)%16U][1U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x2U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*35U/7U)%16U][2U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x1U;
+
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*25U/8U)%16U][0U] = ((u4l_WS2812B_ColorIndex*2U/8U)%16U)%0x2U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*25U/8U)%16U][1U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x2U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*25U/8U)%16U][2U] = ((u4l_WS2812B_ColorIndex*2U/8U)%16U)%0x1U;
+
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*3U/8U)%16U][0U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x10U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*3U/8U)%16U][1U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x2U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*3U/8U)%16U][2U] = ((u4l_WS2812B_ColorIndex*25U/8U)%16U)%0x15U;
+
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*5U/8U)%16U][0U] = ((u4l_WS2812B_ColorIndex*5U/3U)%16U)%0x8U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*5U/8U)%16U][1U] = ((u4l_WS2812B_ColorIndex*5U/3U)%16U)%0x7U;
+      u1l_WS2812B_Color[(u4l_WS2812B_ColorIndex*5U/8U)%16U][2U] = ((u4l_WS2812B_ColorIndex*5U/3U)%16U)%0x6U;
+
+    f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[0U], 16U * 3U );
+    u4l_WS2812B_ColorIndex++;
+    HAL_Delay( 500UL );
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
