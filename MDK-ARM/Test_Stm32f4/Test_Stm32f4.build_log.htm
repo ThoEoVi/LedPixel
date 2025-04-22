@@ -1,0 +1,70 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.31.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: f j, j, LIC=BUURY-IG8AK-BSCYX-HZK3C-H9EM3-IXGM4
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.31.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.31.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.7.0
+Dialog DLL:      TCM.DLL V1.46.0.0
+ 
+<h2>Project:</h2>
+H:\Embedded\MCU\STM32\13_STM32F401CCU6\01_LedProject\MDK-ARM\Test_Stm32f4.uvprojx
+Project File Date:  04/21/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'Test_Stm32f4'
+compiling main.c...
+../Core/Src/main.c(193): warning:  #191-D: type qualifier is meaningless on cast type
+          f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[3U], 1U * 3U );
+../Core/Src/main.c(193): warning:  #175-D: subscript out of range
+          f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[3U], 1U * 3U );
+../Core/Src/main.c(197): warning:  #191-D: type qualifier is meaningless on cast type
+          f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[0U], 1U * 3U );
+../Core/Src/main.c(136): warning:  #177-D: function "f_WS2812B_SendColor"  was declared but never referenced
+  static void f_WS2812B_SendColor( const uint8_t u1a_Red, const uint8_t u1a_Green, const uint8_t u1a_Blue )
+../Core/Src/main.c: 4 warnings, 0 errors
+linking...
+Program Size: Code=3434 RO-data=454 RW-data=24 ZI-data=1632  
+FromELF: creating hex file...
+"Test_Stm32f4\Test_Stm32f4.axf" - 0 Error(s), 4 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.16.0.pack
+                Keil.STM32F4xx_DFP.2.16.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_Test_Stm32f4
+  C:\Users\PC\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include
+  C:\Users\PC\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.6.0
+      Include file:  CMSIS\Core\Include\tz_context.h
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>
