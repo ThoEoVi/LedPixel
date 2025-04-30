@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.inc": "arm",
+        "*.ld": "arm",
+        "*.850": "arm",
+        "*.asm": "arm",
+        "*.map": "arm",
+        "*.sct": "arm",
+        "*.txt": "arm",
+        "main.h": "c",
+        "usb_device.h": "c"
+    }
+}
