@@ -4,7 +4,7 @@
  *      *** Do not modify ! ***
  *
  * Project: 'LedPixel' 
- * Target:  'Test_Stm32f4' 
+ * Target:  'LedPixel' 
  */
 
 #ifndef RTE_COMPONENTS_H

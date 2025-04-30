@@ -8,6 +8,7 @@
         "*.sct": "arm",
         "*.txt": "arm",
         "main.h": "c",
-        "usb_device.h": "c"
+        "usb_device.h": "c",
+        "mpu6050.h": "c"
     }
 }
