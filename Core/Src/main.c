@@ -94,6 +94,9 @@ int main(void)
   /* USER CODE BEGIN 1 */
   uint8_t u1a_DataBuffer[10U];
   static volatile uint16_t u2a_Pitch, u2a_Roll;
+  uint8_t u1a_Mode;
+
+  u1a_Mode = 0U;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -116,7 +119,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  // f_WS2812b_Init();
+  f_WS2812b_Init();
   // f_Mpu6050_Init();
   // f_Mpu6050_SelfTest();
   while (MPU6050_Init(&hi2c1) == 1);
@@ -129,7 +132,40 @@ int main(void)
   {
     // f_Mpu6050_MeasurePitchRoll( &u2a_Pitch, &u2a_Roll );
     MPU6050_Read_All(&hi2c1, &MPU6050);
-    HAL_Delay( 500UL );
+
+    if ( ( 0U != u1a_Mode )
+    &&  ( -90.0F <= MPU6050.KalmanAngleY )
+      && ( -45.0F >= MPU6050.KalmanAngleY ) )
+    {
+      u1a_Mode = 0U;
+    }
+
+    switch ( u1a_Mode )
+    {
+    case 0U:
+      f_WS2812b_LedPixelControlMode( MPU6050.KalmanAngleX, MPU6050.KalmanAngleY, &u1a_Mode );
+      break;
+    case 1U:
+      f_WS2812b_LedEffect1();
+      HAL_Delay( 100UL );
+      break;
+    case 2U:
+      /* Run this mode one time */
+      f_WS2812b_LedEffect2();
+      u1a_Mode = 0xFFU;
+      break;
+    case 3U:
+      f_WS2812b_LedEffect3();
+      HAL_Delay( 200UL );
+      break;
+    case 0xFFU:
+      /* Idle */
+      HAL_Delay( 500UL );
+      break;
+    default:
+      /* Do nothing */
+      break;
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

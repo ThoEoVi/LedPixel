@@ -27,7 +27,20 @@ Project File Date:  04/30/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'LedPixel'
-"Test_Stm32f4\Test_Stm32f4.axf" - 0 Error(s), 0 Warning(s).
+compiling WS2812b.c...
+..\Drivers\WS2812b\WS2812b.c(57): warning:  #223-D: function "abs" declared implicitly
+            if (abs(r - row) <= 1 && abs(c - col) <= 1)
+..\Drivers\WS2812b\WS2812b.c(124): warning:  #191-D: type qualifier is meaningless on cast type
+    f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_ColorMpu[0U], (uint32_t)(4U * 4U * 3U) );
+..\Drivers\WS2812b\WS2812b.c(161): warning:  #191-D: type qualifier is meaningless on cast type
+      f_WS2812B_SendByteArray( (uint8_t* const)&u1l_WS2812B_Color[0U], (uint32_t)(16U * 3U) );
+..\Drivers\WS2812b\WS2812b.c(255): warning:  #177-D: function "f_WS2812B_SendColor"  was declared but never referenced
+  static void f_WS2812B_SendColor( const uint8_t u1a_Red, const uint8_t u1a_Green, const uint8_t u1a_Blue )
+..\Drivers\WS2812b\WS2812b.c: 4 warnings, 0 errors
+linking...
+Program Size: Code=14884 RO-data=620 RW-data=168 ZI-data=1904  
+FromELF: creating hex file...
+"Test_Stm32f4\Test_Stm32f4.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -51,7 +64,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

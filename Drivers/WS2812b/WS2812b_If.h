@@ -9,7 +9,10 @@ extern "C" {
 
 // Function prototypes
 extern void f_WS2812b_Init( void );
-extern void f_WS2812b_LedEffectOne( void );
+extern void f_WS2812b_LedEffect1( void );
+extern void f_WS2812b_LedPixelControlMode( float f4a_X, float f4a_Y, uint8_t* const p2u1a_Mode );
+extern void f_WS2812b_LedEffect2( void );
+extern void f_WS2812b_LedEffect3( void );
 
 #ifdef __cplusplus
 }
