@@ -59,8 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LedOnBoard_Pin GPIO_PIN_13
 #define LedOnBoard_GPIO_Port GPIOC
-#define DI_WS2314_Pin GPIO_PIN_1
-#define DI_WS2314_GPIO_Port GPIOB
+#define LedMatrixHv_Pin GPIO_PIN_5
+#define LedMatrixHv_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

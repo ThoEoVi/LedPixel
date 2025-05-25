@@ -23,9 +23,6 @@
 /* USER CODE BEGIN Includes */
 #include "Mpu_If.h"
 #include "WS2812b_If.h"
-#include <math.h>
-#include "Filter.h"
-#include "Mpu6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,16 +52,14 @@ typedef enum
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
-MPU6050_t MPU6050;
+static uint8_t u1a_App_Mode;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 static uint8_t f_Mpu6050_SelfTest( void );
 static void f_Mpu6050_Init( void );
@@ -92,11 +87,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  uint8_t u1a_DataBuffer[10U];
-  static volatile uint16_t u2a_Pitch, u2a_Roll;
-  uint8_t u1a_Mode;
 
-  u1a_Mode = 0U;
+  u1a_App_Mode = 0U;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -117,12 +109,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   f_WS2812b_Init();
+  HAL_Delay(1000);
   // f_Mpu6050_Init();
-  // f_Mpu6050_SelfTest();
-  while (MPU6050_Init(&hi2c1) == 1);
+//  while (MPU6050_Init(&hi2c1) == 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -130,20 +121,22 @@ int main(void)
 
   while (1)
   {
-    // f_Mpu6050_MeasurePitchRoll( &u2a_Pitch, &u2a_Roll );
-    MPU6050_Read_All(&hi2c1, &MPU6050);
+    // MPU6050_Read_All(&hi2c1, &MPU6050);
 
-    if ( ( 0U != u1a_Mode )
-    &&  ( -90.0F <= MPU6050.KalmanAngleY )
-      && ( -45.0F >= MPU6050.KalmanAngleY ) )
-    {
-      u1a_Mode = 0U;
-    }
+    // /* Home mode */
+    // if ( ( 0U != u1a_App_Mode )
+    //   && ( -90.0F <= MPU6050.KalmanAngleY )
+    //   && ( -45.0F >= MPU6050.KalmanAngleY ) )
+    // {
+    //   u1a_App_Mode = 0U;
+    // }
 
-    switch ( u1a_Mode )
+    /* Mode */
+    u1a_App_Mode = 3U;
+    switch ( u1a_App_Mode )
     {
     case 0U:
-      f_WS2812b_LedPixelControlMode( MPU6050.KalmanAngleX, MPU6050.KalmanAngleY, &u1a_Mode );
+      // f_WS2812b_LedPixelControlMode( MPU6050.KalmanAngleX, MPU6050.KalmanAngleY, &u1a_App_Mode );
       break;
     case 1U:
       f_WS2812b_LedEffect1();
@@ -152,11 +145,11 @@ int main(void)
     case 2U:
       /* Run this mode one time */
       f_WS2812b_LedEffect2();
-      u1a_Mode = 0xFFU;
+      u1a_App_Mode = 0xFFU;
       break;
     case 3U:
       f_WS2812b_LedEffect3();
-      HAL_Delay( 200UL );
+      HAL_Delay( 50UL );
       break;
     case 0xFFU:
       /* Idle */
@@ -219,40 +212,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
-{
-
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -267,14 +226,14 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LedOnBoard_GPIO_Port, LedOnBoard_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LedOnBoard_Pin */
   GPIO_InitStruct.Pin = LedOnBoard_Pin;
@@ -283,12 +242,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LedOnBoard_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : DI_WS2314_Pin */
-  GPIO_InitStruct.Pin = DI_WS2314_Pin;
+  /*Configure GPIO pin : LedMatrixHv_Pin */
+  GPIO_InitStruct.Pin = LedMatrixHv_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(DI_WS2314_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(LedMatrixHv_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -299,8 +258,8 @@ static void MX_GPIO_Init(void)
 void f_Mpu6050_ReadOneByteReg( const uint8_t u1a_AddrReg, uint8_t* const p2u1a_RegDat )
 {
   /* Write address register */
-  HAL_I2C_Master_Transmit( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, (uint8_t*)&u1a_AddrReg, 1U, 100U );
-  HAL_I2C_Master_Receive( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, (uint8_t*)&p2u1a_RegDat[0], 1U, 1000U );
+  // HAL_I2C_Master_Transmit( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, (uint8_t*)&u1a_AddrReg, 1U, 100U );
+  // HAL_I2C_Master_Receive( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, (uint8_t*)&p2u1a_RegDat[0], 1U, 1000U );
 
   return;
 }
@@ -315,7 +274,7 @@ void f_Mpu6050_WriteReq( const uint8_t u1a_AddrReg, const uint8_t u1a_RegDat )
   u1a_TransferDat[1U] = u1a_RegDat;
 
   /* Transfer data via 2ic bus */
-  HAL_I2C_Master_Transmit( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, &u1a_TransferDat[0U], 2U, 100U );
+  // HAL_I2C_Master_Transmit( &hi2c1, U1L_MPU6050_DEVICE_I2C_ADDR, &u1a_TransferDat[0U], 2U, 100U );
 
   /* Write verify */
   f_Mpu6050_ReadOneByteReg( u1a_AddrReg, &u1a_RegReadDat );
@@ -370,7 +329,7 @@ static void f_Mpu6050_MeasurePitchRoll( uint16_t* const p2u2a_Pitch, uint16_t* c
       /* Calculate pitch and roll */
       // f4a_Roll = atan(u2a_AccY / sqrt(pow(u2a_AccX, 2) + pow(u2a_AccZ, 2))) * 180 / F4L_M_PI;
       f4a_Pitch = atan(-u2a_AccX / sqrt(pow(u2a_AccY, 2) + pow(u2a_AccZ, 2))) * 180 / F4L_M_PI;
-      f4a_PitchK= kalman_single(f4a_Pitch, 100, 10);
+      // f4a_PitchK= kalman_single(f4a_Pitch, 100, 10);
       *p2u2a_Pitch = (uint16_t)f4a_PitchK;
       // *p2u2a_Roll = (uint16_t)f4a_Roll;
     }

@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'LedPixel' 
+ * Project: 'Test_Stm32f4' 
  * Target:  'Test_Stm32f4' 
  */
 

@@ -33,7 +33,7 @@ static void f_WS2812b_ClearLedValue( void );
 void f_WS2812b_Init( void )
 {
   /* Set low level more than 50us */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_RESET );
   f_WS2812B_Delay( 2000U );
 
   f_WS2812b_ClearLedValue();
@@ -330,11 +330,11 @@ static void f_WS2812B_Delay( const uint32_t u4a_CntThreshold )
 static void f_WS2812B_SendBitOne( void )
 {
   /* Set High level within 800ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_SET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_SET );
   f_WS2812B_Delay( 8UL );
 
   /* Set High level within 450ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_RESET );
   __asm volatile( "nop" );
 
   return;
@@ -343,11 +343,11 @@ static void f_WS2812B_SendBitOne( void )
 static void f_WS2812B_SendBitZero( void )
 {
   /* Set High level within 400ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_SET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_SET );
   f_WS2812B_Delay( 2UL );
 
   /* Set High level within 850ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_RESET );
   f_WS2812B_Delay( 4UL );
 
   return;
@@ -356,11 +356,11 @@ static void f_WS2812B_SendBitZero( void )
 static void f_WS2812B_SendBitZeroLatest( void )
 {
   /* Set High level within 400ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_SET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_SET );
   f_WS2812B_Delay( 2UL );
 
   /* Set High level within 850ns */
-  HAL_GPIO_WritePin( DI_WS2314_GPIO_Port, DI_WS2314_Pin, GPIO_PIN_RESET );
+  HAL_GPIO_WritePin( LedMatrixHv_GPIO_Port, LedMatrixHv_Pin, GPIO_PIN_RESET );
   f_WS2812B_Delay( 2UL );
 
   return;
