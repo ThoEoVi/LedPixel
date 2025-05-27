@@ -9,6 +9,7 @@
         "*.txt": "arm",
         "main.h": "c",
         "usb_device.h": "c",
-        "mpu6050.h": "c"
+        "mpu6050.h": "c",
+        "mpu_if.h": "c"
     }
 }

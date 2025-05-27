@@ -59,6 +59,9 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LedOnBoard_Pin GPIO_PIN_13
 #define LedOnBoard_GPIO_Port GPIOC
+#define ModeButton_Pin GPIO_PIN_0
+#define ModeButton_GPIO_Port GPIOA
+#define ModeButton_EXTI_IRQn EXTI0_IRQn
 #define LedMatrixHv_Pin GPIO_PIN_5
 #define LedMatrixHv_GPIO_Port GPIOB
 
